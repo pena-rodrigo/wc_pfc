@@ -1,18 +1,13 @@
 clear all
 close all
 
-tf=2000; dt=0.1; N=(tf/dt);
-ttstart = 0.1;
-ttstop  = tf;
-fi=0; ff=0; % [Hz]
-
 k=15; r0=0.5;
 b=1;  x0=5;
 % w=6.3; A = 2.35;
 w=6; A=2.5; 
 r = -10:0.01:10;
 planes=1;
-Iinp=0.8; %osc input amp
+Iinp=1;0.8; %osc input amp
 transient = 1000; %ms
 
 tf=2000+transient; dt=0.1; N=(tf/dt);
@@ -20,6 +15,7 @@ ttstart = 0.1;
 ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
+
 
 taur=1; taun=25;
 
@@ -32,10 +28,9 @@ if(planes==1)
     subplot(1,2,1)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
-%     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
-%     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
-    set(gca,'xtick',[]);
     ylabel('second-variable')
     title('negative feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
@@ -43,18 +38,21 @@ if(planes==1)
     subplot(1,2,2)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
-%     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
-%     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
-    set(gca,'xtick',[]); set(gca,'ytick',[])
     title('positive feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
 
 end
 
+% b=1; w=6; A = 2.5; x0=5;
 acum1=[];
 acum2=acum1; acum3=acum1; acum4=acum1;
-for f = fi:df:ff
+f1 = 50;
+for f1 = 1:50
+f2 = 20;
+
 % f=0; 
 pks1=[]; pks2=[];
 % for taun = 100:1:100
@@ -68,18 +66,20 @@ pks1=[]; pks2=[];
     for i = 1:N-1
         t = i*dt;
         if (t<transient)
-            I=A;
+            I1=A;
+            I2=A;           
         else
-            I = A+Iinp*sin(2*pi*f*t*10^-3);
+            I1 = A+Iinp*sin(2*pi*f1*t*10^-3);
+            I2 = A+Iinp*sin(2*pi*f2*t*10^-3);
         end
        
         %a
-        r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I))/taur;
-        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)))/taun;
-        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n2(i) + I))/taur;
-        n2(i+1) = n2(i) + dt*(-n2(i) + ainf(r2(i)))/taun;
+        r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I1))/taur;
+        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)+r2(i)))/taun;
+        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i) + I2))/taur;
+%         n2(i+1) = n2(i) + dt*(-n2(i) + binf(r2(i)))/taun;
     
-        Input(i) = I;
+%         Input(i) = I;
     end
     
     figure(1)
@@ -92,7 +92,6 @@ pks1=[]; pks2=[];
 %     subplot(2,2,4)
 %     plot(r4,n4,'-','Color',[0,1,1],'LineWidth',0.1)
     
-    if(f==1)
         figure(1)
         subplot(1,2,1)
         plot(r1(1:end),n1(1:end),'-','Color',[0,1,1],'LineWidth',0.1) %end/2
@@ -111,73 +110,34 @@ pks1=[]; pks2=[];
         set(gca, 'FontName', 'Times New Roman','FontSize',20)
       
         set(gca, 'FontName', 'Times New Roman','FontSize',20)
-    elseif(f==4)
-        figure(1)
-        subplot(1,2,1)
-        plot(r1(1:end),n1(1:end),'-','Color',[1,0,1],'LineWidth',0.1)
-        subplot(1,2,2)
-        plot(r2(1:end),n1(1:end),'-','Color',[1,0,1],'LineWidth',0.1)
   
-        figure(4);
-        subplot(1,2,1)
-        plot(dt:dt:dt*N,r1,'Color',[1,0,1],'LineWidth',1)
-        set(gca,'xtick',[]);
-        ylabel('r')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-        subplot(1,2,2)
-        plot(dt:dt:dt*N,r2,'Color',[1,0,1],'LineWidth',1)
-        set(gca,'xtick',[]); set(gca,'ytick',[])
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-      
-        xlabel('Time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-    elseif(f==50)
-        figure(1)
-        subplot(1,2,1)
-        plot(r1(1:end),n1(1:end),'-','Color',[0,0,1],'LineWidth',0.1)
-        subplot(1,2,2)
-        plot(r2(1:end),n1(1:end),'-','Color',[0,0,1],'LineWidth',0.1)
- 
-        figure(4);
-        subplot(1,2,1)
-        plot(dt:dt:dt*N,r1,'Color',[0,0,1],'LineWidth',1)
-        set(gca,'xtick',[]);
-        ylabel('r')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-        subplot(1,2,2)
-        plot(dt:dt:dt*N,r2,'Color',[0,0,1],'LineWidth',1)
-        set(gca,'xtick',[]); set(gca,'ytick',[])
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-        xlabel('Time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-    end
     
-    if(f==1)
-        figure(10)
-        subplot(1,3,1)
-        plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,1,1],'LineWidth',2); 
-        title('frequency = 1Hz')
-        ylabel('input')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-        xlim([0,tf])
-    elseif(f==10)
-        figure(10)
-        subplot(1,3,2)
-        plot(dt:dt:tf-dt,Input(1:end-1),'Color',[1,0,1],'LineWidth',2)
-        title('frequency = 10Hz')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)    
-        xlim([0,tf])
-    elseif(f==50)
-        figure(10)
-        subplot(1,3,3)
-        plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,0,1],'LineWidth',2)
-        title('frequency = 50Hz')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-        xlim([0,tf])
-    end
+%     if(f==1)
+%         figure(10)
+%         subplot(1,3,1)
+%         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,1,1],'LineWidth',2); 
+%         title('frequency = 1Hz')
+%         ylabel('input')
+%         xlabel('time [ms]')
+%         set(gca, 'FontName', 'Times New Roman','FontSize',20)
+%         xlim([0,tf])
+%     elseif(f==10)
+%         figure(10)
+%         subplot(1,3,2)
+%         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[1,0,1],'LineWidth',2)
+%         title('frequency = 10Hz')
+%         xlabel('time [ms]')
+%         set(gca, 'FontName', 'Times New Roman','FontSize',20)    
+%         xlim([0,tf])
+%     elseif(f==50)
+%         figure(10)
+%         subplot(1,3,3)
+%         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,0,1],'LineWidth',2)
+%         title('frequency = 50Hz')
+%         xlabel('time [ms]')
+%         set(gca, 'FontName', 'Times New Roman','FontSize',20)
+%         xlim([0,tf])
+%     end
     
     pks1 = [pks1; length(findpeaks(r1))/2];
     pks2 = [pks2; length(findpeaks(r2))/2];
@@ -186,8 +146,7 @@ pks1=[]; pks2=[];
     acum2 = [acum2; max(r2(end/2:end)) - min(r2(end/2:end))];% sum(r2)];
 
 end
-
-
+% figure; plot(sum(r1)); hold on; plot(sum(r2))
 % figure; 
 % subplot(2,1,1)
 % plot(pks1)
@@ -218,4 +177,4 @@ plot(10,acum2(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
 plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
 set(gca, 'FontName', 'Times New Roman','FontSize',14)
 
-
+% 

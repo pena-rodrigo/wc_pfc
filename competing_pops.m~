@@ -1,11 +1,6 @@
 clear all
 close all
 
-tf=2000; dt=0.1; N=(tf/dt);
-ttstart = 0.1;
-ttstop  = tf;
-fi=0; ff=0; % [Hz]
-
 k=15; r0=0.5;
 b=1;  x0=5;
 % w=6.3; A = 2.35;
@@ -21,19 +16,21 @@ ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
 
-taur=1; taun=25;
+taur=1; taun=10;
 
 Rinf1 = @(x) 1./(1+exp(-(x-x0)));
 ainf = @(r) 1./(1+exp(-k*(r-r0)));
-anull = @(r,A) -(-w*r - A + x0 + log(r./(1-r)))/b;
+anull = @(r,A) (-w*r - A + x0 + log(r./(1-r)))/b;
 
 if(planes==1)
     figure(1);
+    b=-1;
+    anull = @(r,A) (-w*r - A + x0 + log(r./(1-r)))/b;
     subplot(1,2,1)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
-%     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
-%     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
     set(gca,'xtick',[]);
     ylabel('second-variable')
@@ -43,8 +40,8 @@ if(planes==1)
     subplot(1,2,2)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
-%     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
-%     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
     set(gca,'xtick',[]); set(gca,'ytick',[])
     title('positive feedback')
@@ -52,9 +49,12 @@ if(planes==1)
 
 end
 
+b=1; w=6; A = 2.5; x0=5;
 acum1=[];
 acum2=acum1; acum3=acum1; acum4=acum1;
-for f = fi:df:ff
+f1 = 20;
+f2 = 1;
+
 % f=0; 
 pks1=[]; pks2=[];
 % for taun = 100:1:100
@@ -69,15 +69,17 @@ pks1=[]; pks2=[];
         t = i*dt;
         if (t<transient)
             I=A;
+            
         else
-            I = A+Iinp*sin(2*pi*f*t*10^-3);
+            I1 = A+Iinp*sin(2*pi*f1*t*10^-3);
+            I2 = A+Iinp*sin(2*pi*f2*t*10^-3);
         end
        
         %a
         r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I))/taur;
-        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)))/taun;
-        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n2(i) + I))/taur;
-        n2(i+1) = n2(i) + dt*(-n2(i) + ainf(r2(i)))/taun;
+        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)/2+r2(i)/2))/taun;
+        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i) + I))/taur;
+%         n2(i+1) = n2(i) + dt*(-n2(i) + binf(r2(i)))/taun;
     
         Input(i) = I;
     end
@@ -185,7 +187,6 @@ pks1=[]; pks2=[];
     acum1 = [acum1; max(r1(end/2:end)) - min(r1(end/2:end))];% sum(r1)];
     acum2 = [acum2; max(r2(end/2:end)) - min(r2(end/2:end))];% sum(r2)];
 
-end
 
 
 % figure; 
@@ -202,20 +203,20 @@ end
 % title('4')
 % set(gca, 'FontName', 'Times New Roman','FontSize',14)
 
-figure(3);
-subplot(1,2,1)
-plot(acum1,'k','LineWidth',2); hold on;
-plot(1,acum1(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
-plot(10,acum1(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
-plot(50,acum1(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
-ylabel('r_{\rm max} - r_{\rm min}')
-set(gca, 'FontName', 'Times New Roman','FontSize',14)
-
-subplot(1,2,2)
-plot(acum2,'k','LineWidth',2); hold on;
-plot(1,acum2(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
-plot(10,acum2(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
-plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
-set(gca, 'FontName', 'Times New Roman','FontSize',14)
-
-
+% figure(3);
+% subplot(1,2,1)
+% plot(acum1,'k','LineWidth',2); hold on;
+% plot(1,acum1(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
+% plot(10,acum1(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
+% plot(50,acum1(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
+% ylabel('r_{\rm max} - r_{\rm min}')
+% set(gca, 'FontName', 'Times New Roman','FontSize',14)
+% 
+% subplot(1,2,2)
+% plot(acum2,'k','LineWidth',2); hold on;
+% plot(1,acum2(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
+% plot(10,acum2(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
+% plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
+% set(gca, 'FontName', 'Times New Roman','FontSize',14)
+% 
+% 

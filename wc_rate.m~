@@ -1,18 +1,13 @@
 clear all
 close all
 
-tf=2000; dt=0.1; N=(tf/dt);
-ttstart = 0.1;
-ttstop  = tf;
-fi=0; ff=0; % [Hz]
-
 k=15; r0=0.5;
 b=1;  x0=5;
 % w=6.3; A = 2.35;
 w=6; A=2.5; 
 r = -10:0.01:10;
 planes=1;
-Iinp=0.8; %osc input amp
+Iinp=0;0.8; %osc input amp
 transient = 1000; %ms
 
 tf=2000+transient; dt=0.1; N=(tf/dt);
@@ -21,11 +16,11 @@ ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
 
-taur=1; taun=25;
+taur=1; taun=100;
 
 Rinf1 = @(x) 1./(1+exp(-(x-x0)));
 ainf = @(r) 1./(1+exp(-k*(r-r0)));
-anull = @(r,A) -(-w*r - A + x0 + log(r./(1-r)))/b;
+anull = @(r,A) (-w*r - A + x0 + log(r./(1-r)))/b;
 
 if(planes==1)
     figure(1);
@@ -34,8 +29,8 @@ if(planes==1)
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
 %     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
 %     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
-    xlim([0,1]); ylim([0,1]);
-    set(gca,'xtick',[]);
+    xlim([0,2]); ylim([0,2]);
+%     set(gca,'xtick',[]);
     ylabel('second-variable')
     title('negative feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
@@ -45,13 +40,14 @@ if(planes==1)
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
 %     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
 %     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
-    xlim([0,1]); ylim([0,1]);
+    xlim([0,2]); ylim([0,2]);
     set(gca,'xtick',[]); set(gca,'ytick',[])
     title('positive feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
 
 end
 
+% b=1; w=6; A = 2.5; x0=5;
 acum1=[];
 acum2=acum1; acum3=acum1; acum4=acum1;
 for f = fi:df:ff
