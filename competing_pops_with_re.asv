@@ -15,7 +15,7 @@ ttstart = 0.1;
 ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
-D=15; %D=10;
+D=0; %D=10;
 rateP=1000;
 weight=0.25;
 
@@ -200,6 +200,7 @@ plot(10,acum2(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
 % plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
 set(gca, 'FontName', 'Times New Roman','FontSize',14)
 
+
 figure;
 % subplot(1,2,1)
 plot(1:1:40,smooth(acum1),'b','LineWidth',3); 
@@ -210,7 +211,6 @@ xlabel('Input frequency (Hz)')
 ylabel('r_{\rm max} - r_{\rm min}')
 xlim([1,40])
 set(gca, 'FontName', 'Helvetica','FontSize',20)
-
 
 
 % subplot(1,2,2)

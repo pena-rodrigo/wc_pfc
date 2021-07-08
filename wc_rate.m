@@ -38,7 +38,7 @@ if(planes==1)
     set(gca,'xtick',[]);
     ylabel('second-variable')
     title('negative feedback')
-    set(gca, 'FontName', 'Times New Roman','FontSize',20)
+    set(gca, 'FontName', 'Helvetica','FontSize',20)
 
     subplot(1,2,2)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
@@ -48,7 +48,7 @@ if(planes==1)
     xlim([0,1]); ylim([0,1]);
     set(gca,'xtick',[]); set(gca,'ytick',[])
     title('positive feedback')
-    set(gca, 'FontName', 'Times New Roman','FontSize',20)
+    set(gca, 'FontName', 'Helvetica','FontSize',20)
 
 end
 
@@ -95,87 +95,87 @@ pks1=[]; pks2=[];
     if(f==1)
         figure(1)
         subplot(1,2,1)
-        plot(r1(1:end),n1(1:end),'-','Color',[0,1,1],'LineWidth',0.1) %end/2
+        plot(r1(20000:end),n1(20000:end),'-','Color',[0,1,1],'LineWidth',0.1) %end/2
         subplot(1,2,2)
-        plot(r2(1:end),n1(1:end),'-','Color',[0,1,1],'LineWidth',0.1)
+        plot(r2(20000:end),n1(20000:end),'-','Color',[0,1,1],'LineWidth',0.1)
 
         figure(4);
         subplot(1,2,1)
         plot(dt:dt:dt*N,r1,'Color',[0,1,1],'LineWidth',1); hold on;
         set(gca,'xtick',[]);
         ylabel('r')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         subplot(1,2,2)
         plot(dt:dt:dt*N,r2,'Color',[0,1,1],'LineWidth',1); hold on;
         set(gca,'xtick',[]); set(gca,'ytick',[])
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
       
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
-    elseif(f==4)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
+    elseif(f==15)
         figure(1)
         subplot(1,2,1)
-        plot(r1(1:end),n1(1:end),'-','Color',[1,0,1],'LineWidth',0.1)
+        plot(r1(20000:end),n1(20000:end),'-','Color',[1,0,1],'LineWidth',0.1)
         subplot(1,2,2)
-        plot(r2(1:end),n1(1:end),'-','Color',[1,0,1],'LineWidth',0.1)
+        plot(r2(20000:end),n1(20000:end),'-','Color',[1,0,1],'LineWidth',0.1)
   
         figure(4);
         subplot(1,2,1)
         plot(dt:dt:dt*N,r1,'Color',[1,0,1],'LineWidth',1)
         set(gca,'xtick',[]);
         ylabel('r')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         subplot(1,2,2)
         plot(dt:dt:dt*N,r2,'Color',[1,0,1],'LineWidth',1)
         set(gca,'xtick',[]); set(gca,'ytick',[])
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
       
         xlabel('Time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
     elseif(f==50)
         figure(1)
         subplot(1,2,1)
-        plot(r1(1:end),n1(1:end),'-','Color',[0,0,1],'LineWidth',0.1)
+        plot(r1(20000:end),n1(20000:end),'-','Color',[0,0,1],'LineWidth',0.1)
         subplot(1,2,2)
-        plot(r2(1:end),n1(1:end),'-','Color',[0,0,1],'LineWidth',0.1)
+        plot(r2(20000:end),n1(20000:end),'-','Color',[0,0,1],'LineWidth',0.1)
  
         figure(4);
         subplot(1,2,1)
         plot(dt:dt:dt*N,r1,'Color',[0,0,1],'LineWidth',1)
         set(gca,'xtick',[]);
         ylabel('r')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         subplot(1,2,2)
         plot(dt:dt:dt*N,r2,'Color',[0,0,1],'LineWidth',1)
         set(gca,'xtick',[]); set(gca,'ytick',[])
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         xlabel('Time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
     end
     
     if(f==1)
         figure(10)
         subplot(1,3,1)
         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,1,1],'LineWidth',2); 
-        title('frequency = 1Hz')
-        ylabel('input')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        title('Input frequency = 1Hz')
+        ylabel('Input')
+        xlabel('Time (ms)')
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         xlim([0,tf])
-    elseif(f==10)
+    elseif(f==15)
         figure(10)
         subplot(1,3,2)
         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[1,0,1],'LineWidth',2)
-        title('frequency = 10Hz')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)    
+        title('Input frequency = 15Hz')
+        xlabel('Time (ms)')
+        set(gca, 'FontName', 'Helvetica','FontSize',20)    
         xlim([0,tf])
     elseif(f==50)
         figure(10)
         subplot(1,3,3)
         plot(dt:dt:tf-dt,Input(1:end-1),'Color',[0,0,1],'LineWidth',2)
-        title('frequency = 50Hz')
-        xlabel('time [ms]')
-        set(gca, 'FontName', 'Times New Roman','FontSize',20)
+        title('Input frequency = 50Hz')
+        xlabel('Time (ms)')
+        set(gca, 'FontName', 'Helvetica','FontSize',20)
         xlim([0,tf])
     end
     
@@ -194,28 +194,30 @@ end
 % xlabel('\tau_a [ms]')
 % ylabel('Frequency [Hz]')
 % title('1')
-% set(gca, 'FontName', 'Times New Roman','FontSize',14)
+% set(gca, 'FontName', 'Helvetica','FontSize',14)
 % subplot(2,1,2)
 % plot(pks2)
 % xlabel('\tau_a [ms]')
 % ylabel('Frequency [Hz]')
 % title('4')
-% set(gca, 'FontName', 'Times New Roman','FontSize',14)
+% set(gca, 'FontName', 'Helvetica','FontSize',14)
 
 figure(3);
 subplot(1,2,1)
 plot(acum1,'k','LineWidth',2); hold on;
 plot(1,acum1(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
-plot(10,acum1(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
+plot(15,acum1(15),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
 plot(50,acum1(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
 ylabel('r_{\rm max} - r_{\rm min}')
-set(gca, 'FontName', 'Times New Roman','FontSize',14)
+xlabel('Input frequency (Hz)')
+set(gca, 'FontName', 'Helvetica','FontSize',14)
 
 subplot(1,2,2)
 plot(acum2,'k','LineWidth',2); hold on;
 plot(1,acum2(1),'o','Color',[0,1,1],'MarkerFaceColor',[0,1,1])
-plot(10,acum2(10),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
+plot(15,acum2(15),'o','Color',[1,0,1],'MarkerFaceColor',[1,0,1])
 plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
-set(gca, 'FontName', 'Times New Roman','FontSize',14)
+xlabel('Input frequency (Hz)')
+set(gca, 'FontName', 'Helvetica','FontSize',14)
 
 

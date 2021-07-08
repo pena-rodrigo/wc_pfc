@@ -2,7 +2,7 @@ clear all
 close all
 
 k=15; r0=0.5;
-b=1;  x0=5;
+b=2;  x0=5;
 % w=6.3; A = 2.35;
 w=6; A=2.5; 
 r = -10:0.01:10;
@@ -15,7 +15,9 @@ ttstart = 0.1;
 ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
-D=1;
+% D=0.001;
+rateP=9000;
+weight=0.1;
 
 taur=1; taun=25;
 
@@ -25,33 +27,49 @@ anull = @(r,A) -(-w*r - A + x0 + log(r./(1-r)))/b;
 
 if(planes==1)
     figure(1);
-    subplot(1,2,1)
+    subplot(2,2,1)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
     ylabel('second-variable')
-    title('negative feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
 
-    subplot(1,2,2)
+    subplot(2,2,2)
     plot(r,ainf(r),'g','LineWidth',2); hold on;
     plot(r,anull(r,A),'r','LineWidth',2); hold on;
     plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
     plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
     xlim([0,1]); ylim([0,1]);
-    title('positive feedback')
     set(gca, 'FontName', 'Times New Roman','FontSize',20)
+    
+    subplot(2,2,3)
+    plot(r,ainf(r),'g','LineWidth',2); hold on;
+    plot(r,anull(r,A),'r','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    xlim([0,1]); ylim([0,1]);
+    set(gca, 'FontName', 'Times New Roman','FontSize',20)
+
+    
+    subplot(2,2,4)
+    plot(r,ainf(r),'g','LineWidth',2); hold on;
+    plot(r,anull(r,A),'r','LineWidth',2); hold on;
+    plot(r,anull(r,A+Iinp),'r--','LineWidth',2); hold on;
+    plot(r,anull(r,A-Iinp),'r--','LineWidth',2); hold on;
+    xlim([0,1]); ylim([0,1]);
+    set(gca, 'FontName', 'Times New Roman','FontSize',20)
+
 
 end
 
 % b=1; w=6; A = 2.5; x0=5;
 acum1=[];
 acum2=acum1; acum3=acum1; acum4=acum1;
-f1 = 50;
-for f1 = 1:50
-f2 = f1;
+f2 = 20;
+for f1 = 1:1
+% f2 = f1;
 
 % f=0; 
 pks1=[]; pks2=[];
@@ -60,7 +78,10 @@ pks1=[]; pks2=[];
     n1=zeros(1,N); n1(1)=0.5;
     r2=zeros(1,N); r2(1)=0.4;
     n2=zeros(1,N); n2(1)=0.5;
-
+    r3=zeros(1,N); r3(1)=0.4;
+    n3=zeros(1,N); n3(1)=0.5;
+    r4=zeros(1,N); r4(1)=0.4;
+    
     Input=zeros(1,N);
 
     for i = 1:N-1
@@ -73,26 +94,33 @@ pks1=[]; pks2=[];
             I2 = A+Iinp*sin(2*pi*f2*t*10^-3);
         end
        
-        %a
         r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I1))/taur;
-        r1(i+1) = r1(i+1) + sqrt(dt*2*D)*rand();
-        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)+r2(i)))/taun;
+        
+        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)/2+r2(i)/2))/taun;
        
-        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i) + I2))/taur;
-%         n2(i+1) = n2(i) + dt*(-n2(i) + binf(r2(i)))/taun;
+        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i)/2 - b*n2(i)/2 + I2))/taur;    
+        
+        n2(i+1) = n2(i) + dt*(-n2(i) + ainf(r2(i)/2+r3(i)/2))/taun;
+       
+        r3(i+1) = r3(i) + dt*(-r3(i) + Rinf1(w*r3(i) - b*n2(i)/2 - b*n3(i)/2 + I1))/taur;
+        
+        n3(i+1) = n3(i) + dt*(-n3(i) + ainf(r3(i)/2+r4(i)/2))/taun;
+       
+        r4(i+1) = r4(i) + dt*(-r4(i) + Rinf1(w*r4(i) - b*n3(i) + I2))/taur; 
+
     
 %         Input(i) = I;
     end
     
     figure(1)
-%     subplot(2,2,1)
-%     plot(r1,n1,'-','Color',[0,1,1],'LineWidth',0.1)
-%     subplot(2,2,2)
-%     plot(r2,n2,'-','Color',[0,1,1],'LineWidth',0.1)
-%     subplot(2,2,3)
-%     plot(r3,n3,'-','Color',[0,1,1],'LineWidth',0.1)
-%     subplot(2,2,4)
-%     plot(r4,n4,'-','Color',[0,1,1],'LineWidth',0.1)
+    subplot(2,2,1)
+    plot(r1,n1,'-','Color',[0,1,1],'LineWidth',0.1)
+    subplot(2,2,2)
+    plot(r2,n2/2+n1/2,'-','Color',[0,1,1],'LineWidth',0.1)
+    subplot(2,2,3)
+    plot(r3,n2/2+n3/2,'-','Color',[0,1,1],'LineWidth',0.1)
+    subplot(2,2,4)
+    plot(r4,n3,'-','Color',[0,1,1],'LineWidth',0.1)
     
 %         figure(1)
 %         subplot(1,2,1)
@@ -146,7 +174,9 @@ pks1=[]; pks2=[];
     
     acum1 = [acum1; max(r1(end/2:end)) - min(r1(end/2:end))];% sum(r1)];
     acum2 = [acum2; max(r2(end/2:end)) - min(r2(end/2:end))];% sum(r2)];
-
+    acum3 = [acum3; max(r3(end/2:end)) - min(r3(end/2:end))];% sum(r1)];
+    acum4 = [acum4; max(r4(end/2:end)) - min(r4(end/2:end))];% sum(r2)];
+    
 end
 % figure; plot(sum(r1)); hold on; plot(sum(r2))
 % figure; 
@@ -180,9 +210,13 @@ plot(50,acum2(50),'o','Color',[0,0,1],'MarkerFaceColor',[0,0,1])
 set(gca, 'FontName', 'Times New Roman','FontSize',14)
 
 
-figure; plot(acum1,'b','LineWidth',2); 
+figure; 
+plot(acum1,'b','LineWidth',2); 
 hold on; 
 plot(acum2,'r','LineWidth',2);
+plot(acum3,'g','LineWidth',2); 
+plot(acum4,'k','LineWidth',2);
+legend('1','2','3','4')
 
 
 % 
