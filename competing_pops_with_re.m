@@ -15,7 +15,7 @@ ttstart = 0.1;
 ttstop  = tf;
 fi=1; ff=50; % [Hz]
 df=1;
-D=15; %D=10;
+D=100e-4; %D=10;
 rateP=1000;
 weight=0.25;
 
@@ -75,19 +75,21 @@ pks1=[]; pks2=[];
             I1 = A+Iinp*sin(2*pi*f1*t*10^-3);
             I2 = A+Iinp*sin(2*pi*f2*t*10^-3);
         end
-       
-        r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I1 + sqrt(dt*2*D)*rand()))/taur;
-%         r1(i+1) = r1(i+1) + sqrt(dt*2*D)*rand()/taur;
+        %%% needs to correct noise impementation
+        r1(i+1) = r1(i) + dt*(-r1(i) + Rinf1(w*r1(i) - b*n1(i) + I1))/taur;
+        r1(i+1) = r1(i+1) + sqrt(dt*2*D)*rand()/taur;
 %         if(rand()<(rateP*dt)/1000) %divide by 1000 to adjust units [kHz]
 %             r1(i+1) = r1(i+1) + weight*dt/taur;
 %         end
         
-        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)+r2(i) + sqrt(dt*2*D)*rand()))/taun; %
+        n1(i+1) = n1(i) + dt*(-n1(i) + ainf(r1(i)+r2(i)))/taun; %
+        n1(i+1) = n1(i+1) + sqrt(dt*2*D)*rand()/taun;
 %         if(rand()<(rateP*dt)/1000) %divide by 1000 to adjust units [kHz]
 %             n1(i+1) = n1(i+1) + weight*dt/taur;
 %         end
         
-        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i) + I2 + sqrt(dt*2*D)*rand()))/taur;
+        r2(i+1) = r2(i) + dt*(-r2(i) + Rinf1(w*r2(i) - b*n1(i) + I2))/taur;
+        r2(i+1) = r2(i+1) + sqrt(dt*2*D)*rand()/taur;
 %         r2(i+1) = r2(i+1) + sqrt(dt*2*D)*rand()/taur;
 %         if(rand()<(rateP*dt)/1000) %divide by 1000 to adjust units [kHz]
 %             r2(i+1) = r2(i+1) + weight*dt/taur;
